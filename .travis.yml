@@ -1,0 +1,25 @@
+sudo required
+services:
+  - docker
+
+before_install:
+  - docker build -t gsourav/multi-container-react-app-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e -CI=true gsourav/multi-container-react-app-test npm test -- --coverage
+
+after_success:
+  - docker build -t gsourav/multi-container-app-client ./client
+  - docker build -t gsourav/multi-container-app-nginx ./nginx
+  - docker build -t gsourav/multi-container-app-server ./server
+  - docker build -t gsourav/multi-container-app-worker ./worker
+
+  # Log into docker hub using CLI
+  echo "$DOCKER_PWD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  # Take the docker images and push them to docker-hub
+  - docker push gsourav/multi-container-app-client
+  - docker push gsourav/multi-container-app-nginx
+  - docker push gsourav/multi-container-app-server
+  - docker push gsourav/multi-container-app-worker
+
