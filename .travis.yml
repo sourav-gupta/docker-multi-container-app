@@ -25,3 +25,14 @@ after_success:
   - docker push gsourav/multi-container-app-server
   - docker push gsourav/multi-container-app-worker
 
+deploy:
+  provider: elasticbeanstalk
+  region: us-west-2
+  app: my-docker-react-web-app
+  env: Mydockerreactwebapp-env
+  bucket_name: elasticbeanstalk-us-west-2-037856357894
+  bucket_path: multi-container-docker-app
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
